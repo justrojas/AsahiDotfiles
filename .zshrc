@@ -25,6 +25,7 @@ plugins=(
   kubectl
   python
   pip
+  zsh-autosuggestions
 )
 source $ZSH/oh-my-zsh.sh
 
@@ -45,14 +46,24 @@ function fuzzycd() {
 # Aliases
 alias zshconfig="$EDITOR ~/.zshrc"
 alias ohmyzsh="$EDITOR ~/.oh-my-zsh"
+alias update='sudo dnf update'
 
-# File listing aliases
-alias l='eza -lh --icons=auto'
-alias ls='eza -1 --icons=auto'
-alias la='eza -lha --icons=auto --sort=name --group-directories-first'
-alias ld='eza -lhD --icons=auto'
+# File listing aliases (using exa if available)
+if command -v exa &> /dev/null; then
+  alias l='exa -lh'
+  alias ls='exa -1'
+  alias la='exa -lha --sort=name --group-directories-first'
+  alias ld='exa -lhD'
+  alias lt='exa --tree'
+else
+  alias l='ls -lh'
+  alias ls='ls -1'
+  alias la='ls -lha'
+  alias ld='ls -ld'
+  alias lt='tree -h --du ./'
+fi
+
 alias ll='ls -la'
-alias lt='tree -h --du ./'
 
 # Other helpful aliases
 alias tls='tmux ls'
@@ -62,3 +73,10 @@ alias fcd=fuzzycd
 
 # Load Powerlevel10k configuration
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Additional PATH and library configurations
+export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
+export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+
+# zoxide configuration
+eval "$(zoxide init --cmd cd zsh)"
